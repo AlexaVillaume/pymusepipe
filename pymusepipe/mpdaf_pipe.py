@@ -50,10 +50,10 @@ __version__ = '0.0.1 (15 March 2018)'
 #                           check_musepipe
 #########################################################################
 
-class MuseCube(Cube): 
+class MuseCube(Cube):
     """Wrapper around the mpdaf Cube functionalities
     """
-    
+
     def __init__(self, source=None, verbose=False, **kwargs) :
         """Initialisation of the opening of a Cube
         """
@@ -61,7 +61,7 @@ class MuseCube(Cube):
             self.__dict__.update(source.__dict__)
         else :
             Cube.__init__(self, **kwargs)
- 
+
         self.verbose = verbose
 
     def get_spectrum_from_cube(self, nx=None, ny=None, pixel_window=0, title="Spectrum") :
@@ -71,7 +71,7 @@ class MuseCube(Cube):
         if nx == None : nx = self.shape[2] // 2
         if ny == None : ny = self.shape[1] // 2
         pixel_halfwindow = pixel_window // 2
-        subcube = self[:, ny - pixel_halfwindow: ny + pixel_halfwindow + 1, 
+        subcube = self[:, ny - pixel_halfwindow: ny + pixel_halfwindow + 1,
                     nx - pixel_halfwindow: nx + pixel_halfwindow + 1]
         return MuseSpectrum(source=subcube.sum(axis=(1,2)), title=title)
 
@@ -84,7 +84,7 @@ class MuseCube(Cube):
         """
         if central_lambda == None : central_lambda = self.shape[0] // 2
         lambda_halfwindow = lambda_window // 2
-        return MuseImage(source=self[central_lambda - lambda_halfwindow: 
+        return MuseImage(source=self[central_lambda - lambda_halfwindow:
             central_lambda + lambda_halfwindow + 1, :, :].sum(axis=0))
 
     def get_set_spectra(self) :
@@ -93,9 +93,9 @@ class MuseCube(Cube):
         self.spec_fullgalaxy = MuseSpectrum(source=self.sum(axis=(1,2)), title="Full galaxy Spectrum")
         self.spec_4quad = self.get_quadrant_spectra_from_cube()
         self.spec_central_aper = MuseSetSpectra(
-               self.get_spectrum_from_cube(lambda_window=0, title="Central aperture"), 
-               self.get_spectrum_from_cube(lambda_window=20, title="Central Aperture, w=20"), 
-               self.get_spectrum_from_cube(lambda_window=40, title="Central Aperture, w=40"),
+               self.get_spectrum_from_cube(pixel_window=0, title="Central aperture"),
+               self.get_spectrum_from_cube(pixel_window=20, title="Central Aperture, w=20"),
+               self.get_spectrum_from_cube(pixel_window=40, title="Central Aperture, w=40"),
                subtitle="central_spectra")
 
     def get_quadrant_spectra_from_cube(self, pixel_window=0) :
@@ -110,9 +110,9 @@ class MuseCube(Cube):
         nx34, ny34 = 3 * nx4, 3 * ny4
 
         spec1 = self.get_spectrum_from_cube( nx4,  ny4, pixel_window, title="Quadrant 1")
-        spec2 = self.get_spectrum_from_cube( nx4, ny34, pixel_window, title="Quadrant 2") 
-        spec3 = self.get_spectrum_from_cube(nx34,  ny4, pixel_window, title="Quadrant 3") 
-        spec4 = self.get_spectrum_from_cube(nx34, ny34, pixel_window, title="Quadrant 4") 
+        spec2 = self.get_spectrum_from_cube( nx4, ny34, pixel_window, title="Quadrant 2")
+        spec3 = self.get_spectrum_from_cube(nx34,  ny4, pixel_window, title="Quadrant 3")
+        spec4 = self.get_spectrum_from_cube(nx34, ny34, pixel_window, title="Quadrant 4")
         return MuseSetSpectra(spec1, spec2, spec3, spec4, subtitle="4 Quadrants")
 
     def get_emissionline_image(self, line=None, velocity=0., redshift=None, lambda_window=10., medium='vacuum') :
@@ -127,10 +127,10 @@ class MuseCube(Cube):
         line: name of the emission line (see emission_lines dictionary)
         """
 
-        [lmin, lmax] = upipe.get_emissionline_band(line=line, velocity=velocity, 
+        [lmin, lmax] = upipe.get_emissionline_band(line=line, velocity=velocity,
                 redshift=redshift, medium=medium, lambda_window=lambda_window)
-        
-        return MuseImage(self.select_lambda(lmin, lmax).sum(axis=0), 
+
+        return MuseImage(self.select_lambda(lmin, lmax).sum(axis=0),
                 title="{0} map".format(line))
 
 def get_sky_spectrum(filename) :
@@ -143,7 +143,7 @@ def get_sky_spectrum(filename) :
     spec = Spectrum(wave=wavein, data=sky['data'], var=sky['stat'])
     return spec
 
-class MuseImage(Image): 
+class MuseImage(Image):
     """Wrapper around the mpdaf Image functionalities
     """
     def __init__(self, source=None, **kwargs) :
@@ -160,7 +160,7 @@ class MuseImage(Image):
             self.__dict__.update(source.__dict__)
         else :
             Image.__init__(self, **kwargs)
- 
+
         self.get_fwhm_startend()
 
     def get_fwhm_startend(self) :
@@ -195,7 +195,7 @@ class MuseSetImages(list) :
                 upipe.print_warning("Overiding subtitle")
             self.subtitle = kwargs.get('subtitle', "")
 
-class MuseSpectrum(Spectrum): 
+class MuseSpectrum(Spectrum):
     """Wrapper around the mpdaf Spectrum functionalities
     """
     def __init__(self, source=None, **kwargs) :
@@ -240,4 +240,3 @@ class MuseSetSpectra(list) :
             if 'subtitle' in kwargs :
                 upipe.print_warning("Overiding subtitle")
             self.subtitle = kwargs.get('subtitle', "")
-
