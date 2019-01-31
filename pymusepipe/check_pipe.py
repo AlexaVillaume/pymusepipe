@@ -68,7 +68,7 @@ class CheckPipe(MusePipe) :
     def check_quadrants(self) :
         """Checking spectra from the 4 quadrants
         """
-        upipe.print_plot("Plotting the 4 quadrants-spectra")
+        print_plot("Plotting the 4 quadrants-spectra")
         self.pdf.plot_page(self.cube.spec_4quad)
 
     def check_master_bias_flat(self) :
@@ -81,7 +81,7 @@ class CheckPipe(MusePipe) :
         self.pdf.plot_page(tocheck)
 
     def check_emissionline_image(self, line="Ha", velocity=0.) :
-        """Building the White and Ha images and 
+        """Building the White and Ha images and
         Adding them on the page
         """
         white = self.cube.get_whiteimage_from_cube()
@@ -116,4 +116,3 @@ class CheckPipe(MusePipe) :
 
         upipe.print_plot("Plotting the set of Ha images")
         self.pdf.plot_page(tocheck)
-
