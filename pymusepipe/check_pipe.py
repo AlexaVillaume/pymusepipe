@@ -33,7 +33,7 @@ def print_plot(text) :
 class CheckPipe(MusePipe) :
     """Checking the outcome of the data reduction
     """
-    def __init__(self, mycube=name_final_datacube, pdf_name="check_pipe.pdf", 
+    def __init__(self, mycube=name_final_datacube, pdf_name="check_pipe.pdf",
             pipe=None, standard_set=True, **kwargs) :
         """Init of the CheckPipe class. Using a default datacube to run some checks
         and create some plots
@@ -55,7 +55,7 @@ class CheckPipe(MusePipe) :
             self.check_quadrants()
             # plotting the white image and Ha image
             # Page 2
-            self.check_white_Ha_image()
+            self.check_emissionline_image()
             # plotting the sky spectra
             # Page 3
             self.check_sky_spectra()
@@ -77,7 +77,7 @@ class CheckPipe(MusePipe) :
         bias = self.get_master(mastertype="Bias", scale='arcsinh', title="Master Bias")
         flat = self.get_master(mastertype="Flat", scale='arcsing', title="Master Flat")
         tocheck = MuseSetImages(bias, flat, subtitle="Master Bias - Master Flat")
-        upipe.print_plot("Plotting the Master Bias and Flat")
+        print_plot("Plotting the Master Bias and Flat")
         self.pdf.plot_page(tocheck)
 
     def check_emissionline_image(self, line="Ha", velocity=0.) :
@@ -87,7 +87,7 @@ class CheckPipe(MusePipe) :
         white = self.cube.get_whiteimage_from_cube()
         linemap = self.cube.get_emissionline_image(line=line, velocity=velocity)
         tocheck = MuseSetImages(white, linemap, subtitle="White and emission line {0} images".format(line))
-        upipe.print_plot("Plotting the White and {0} images".format(line))
+        print_plot("Plotting the White and {0} images".format(line))
         self.pdf.plot_page(tocheck)
 
     def check_sky_spectra(self) :
@@ -101,7 +101,7 @@ class CheckPipe(MusePipe) :
                 add_sky_lines=True))
             counter += 1
 
-        upipe.print_plot("Plotting the sky spectra")
+        print_plot("Plotting the sky spectra")
         self.pdf.plot_page(tocheck)
 
     def check_Ha_images(self) :
@@ -114,5 +114,5 @@ class CheckPipe(MusePipe) :
             tocheck.append(MuseImage(filename=imaname, title="Ha {0:2d}".format(counter)))
             counter += 1
 
-        upipe.print_plot("Plotting the set of Ha images")
+        print_plot("Plotting the set of Ha images")
         self.pdf.plot_page(tocheck)
